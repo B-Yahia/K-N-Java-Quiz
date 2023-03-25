@@ -6,13 +6,13 @@ public class Quiz {
     private int id;
     private String name;
     private List<Question> questions;
-    public Quiz() {
-    }
 
     public Quiz(String name, List<Question> questions) {
         this.name = name;
         this.questions = questions;
     }
+    public Quiz() {}
+
 
     public String getName() {
         return name;
