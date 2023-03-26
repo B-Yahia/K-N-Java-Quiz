@@ -152,6 +152,44 @@ public class DoaQuestion {
         }
     }
 
+    public List<Question> searchQuestionByTopic(String topicName) {
+        List<Question> questions = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = dbManager.getConnection();
+
+            String searchSQL = "SELECT q.id, q.content, q.difficulty_rank, t.id as topic_id, t.name as topic_name " +
+                    "FROM questions q JOIN topics t ON q.topic_id = t.id WHERE t.name = ?";
+            preparedStatement = connection.prepareStatement(searchSQL);
+            preparedStatement.setString(1, topicName);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Topic topic = new Topic();
+                topic.setId(resultSet.getInt("topic_id"));
+                topic.setName(resultSet.getString("topic_name"));
+
+                Question question = new Question();
+                question.setId(resultSet.getInt("id"));
+                question.setContent(resultSet.getString("content"));
+                question.setDifficultyRank(resultSet.getInt("difficulty_rank"));
+                question.setTopic(topic);
+
+                questions.add(question);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            dbManager.closeConnections(connection, preparedStatement, resultSet);
+        }
+
+        return questions;
+    }
+
     public Question getQuestionById(int questionId) {
         Question question = null;
         Connection connection = null;
@@ -209,42 +247,24 @@ public class DoaQuestion {
 
         return question;
     }
-
-    public List<Question> searchQuestionByTopic(String topicName) {
-        List<Question> questions = new ArrayList<>();
+    public void deleteTopicById(int topicId) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
 
         try {
             connection = dbManager.getConnection();
 
-            String searchSQL = "SELECT q.id, q.content, q.difficulty_rank, t.id as topic_id, t.name as topic_name " +
-                    "FROM questions q JOIN topics t ON q.topic_id = t.id WHERE t.name = ?";
-            preparedStatement = connection.prepareStatement(searchSQL);
-            preparedStatement.setString(1, topicName);
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Topic topic = new Topic();
-                topic.setId(resultSet.getInt("topic_id"));
-                topic.setName(resultSet.getString("topic_name"));
-
-                Question question = new Question();
-                question.setId(resultSet.getInt("id"));
-                question.setContent(resultSet.getString("content"));
-                question.setDifficultyRank(resultSet.getInt("difficulty_rank"));
-                question.setTopic(topic);
-
-                questions.add(question);
-            }
-
+            String deleteTopicSQL = "DELETE FROM topics WHERE id = ?";
+            preparedStatement = connection.prepareStatement(deleteTopicSQL);
+            preparedStatement.setInt(1, topicId);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            dbManager.closeConnections(connection, preparedStatement, resultSet);
+            dbManager.closeConnections(connection, preparedStatement, null);
         }
-
-        return questions;
     }
+
+
 }
+

@@ -60,6 +60,8 @@ class DoaQuestionTest {
 
         // Clean up the test data
         doaQuestion.deleteQuestion(savedQuestion.getId());
+        doaQuestion.deleteTopicById(savedQuestion.getTopic().getId());
+
     }
 
     @Test
@@ -118,6 +120,8 @@ class DoaQuestionTest {
 
         // Clean up the test data
         doaQuestion.deleteQuestion(newQuestion.getId());
+        doaQuestion.deleteTopicById(newQuestion.getTopic().getId());
+
     }
 
     @Test
@@ -149,6 +153,8 @@ class DoaQuestionTest {
         // Clean up the test data
         doaQuestion.deleteQuestion(savedQuestion1.getId());
         doaQuestion.deleteQuestion(savedQuestion2.getId());
+        doaQuestion.deleteTopicById(savedQuestion1.getTopic().getId());
+        doaQuestion.deleteTopicById(savedQuestion2.getTopic().getId());
     }
 }
 
